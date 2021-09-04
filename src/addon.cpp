@@ -1,6 +1,7 @@
 #include <napi.h>
 #include <GLFW/glfw3.h>
 
+#include "constants.hpp"
 #include "window.hpp"
 
 class GLFWAddon : public Napi::Addon<GLFWAddon> {
@@ -9,6 +10,7 @@ public:
     {
         glfwInit();
 
+        InitConstants(env, exports);
         InitWindow(env, exports);
 
         DefineAddon(exports, {

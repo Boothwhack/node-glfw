@@ -3,7 +3,12 @@ project(node_glfw)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(node_glfw SHARED ${CMAKE_JS_SRC} src/window.cpp src/window.hpp src/addon.cpp)
+add_library(node_glfw SHARED ${CMAKE_JS_SRC}
+        src/addon.cpp
+        src/constants.cpp
+        src/constants.hpp
+        src/window.cpp
+        src/window.hpp)
 set_target_properties(node_glfw PROPERTIES PREFIX "" SUFFIX ".node")
 
 execute_process(COMMAND node -p "require('node-addon-api').include"
