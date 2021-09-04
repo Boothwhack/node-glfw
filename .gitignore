@@ -1,0 +1,7 @@
+build
+cmake-*
+node-modules
+.idea
+
+# Project exclude paths
+/node_modules/
