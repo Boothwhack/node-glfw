@@ -1,6 +1,6 @@
 {
   "name": "@beeswax/node-glfw",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "install": "cmake-js install && npm run build",
     "build": "cmake-js compile"
