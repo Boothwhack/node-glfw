@@ -1,0 +1,15 @@
+#include <GLFW/glfw3.h>
+#include <napi.h>
+
+using Napi::Number;
+using Napi::PropertyDescriptor;
+
+#define ConstantDescriptor(name) \
+    PropertyDescriptor::Value(#name, Number::New(env, GLFW_##name), napi_enumerable)
+
+void InitConstants(Napi::Env env, Napi::Object exports)
+{
+    exports.DefineProperties({
+        {{CONSTANTS}}
+    });
+}
