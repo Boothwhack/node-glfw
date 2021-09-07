@@ -1,6 +1,7 @@
 #include <napi.h>
 #include <GLFW/glfw3.h>
 
+#include "utils.hpp"
 #include "constants.hpp"
 #include "window.hpp"
 
@@ -15,6 +16,7 @@ public:
 
         DefineAddon(exports, {
             InstanceMethod<&GLFWAddon::pollEvents>("pollEvents"),
+            InstanceMethod<&GLFWAddon::windowHint>("windowHint"),
         });
     }
 
@@ -26,6 +28,12 @@ public:
     void pollEvents(const Napi::CallbackInfo& info)
     {
         glfwPollEvents();
+    }
+
+    void windowHint(const Napi::CallbackInfo& info)
+    {
+        verifyArguments(info, napi_number, napi_number);
+        glfwWindowHint(info[0].ToNumber(), info[1].ToNumber());
     }
 };
 

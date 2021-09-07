@@ -36,9 +36,27 @@ struct Window : public Napi::ObjectWrap<Window> {
         exports.Set("Window", DefineClass(env, "Window", {
             InstanceAccessor<&Window::getShouldClose, &Window::setShouldClose>("shouldClose"),
             InstanceMethod<&Window::destroyWindow>("destroyWindow"),
+            InstanceMethod<&Window::makeContextCurrent>("makeContextCurrent"),
             InstanceMethod<&Window::setKeyCallback>("setKeyCallback"),
             InstanceMethod<&Window::swapBuffers>("swapBuffers"),
         }));
+    }
+
+    Napi::Value getFramebufferSize(const Napi::CallbackInfo& info)
+    {
+        int width, height;
+        glfwGetFramebufferSize(handle, &width, &height);
+
+        auto arr{Napi::Array::New(info.Env(), 2)};
+        arr.Set(0u, width);
+        arr.Set(1u, height);
+
+        return arr;
+    }
+
+    void makeContextCurrent(const Napi::CallbackInfo&)
+    {
+        glfwMakeContextCurrent(handle);
     }
 
     Napi::Value getShouldClose(const Napi::CallbackInfo& info)
@@ -58,13 +76,14 @@ struct Window : public Napi::ObjectWrap<Window> {
         glfwSwapBuffers(handle);
     }
 
-    Napi::ThreadSafeFunction keyCallbackJs{};
+    Napi::ThreadSafeFunction keyCallbackJs{nullptr};
 
     void setKeyCallback(const Napi::CallbackInfo& info)
     {
         if (info[0].IsNull() || info[0].IsUndefined()) {
             glfwSetKeyCallback(handle, nullptr);
-            keyCallbackJs.Release();
+            keyCallbackJs.Unref(info.Env());
+            keyCallbackJs = nullptr;
         }
         else {
             keyCallbackJs = Napi::ThreadSafeFunction::New(
@@ -84,7 +103,7 @@ struct Window : public Napi::ObjectWrap<Window> {
     {
         Window& w{*static_cast<Window*>(glfwGetWindowUserPointer(window))};
 
-        if (w.keyCallbackJs) {
+        if (w.keyCallbackJs != nullptr) {
             w.keyCallbackJs.NonBlockingCall([key, scancode, action, mods](Napi::Env env, Napi::Function cb) {
                 cb.Call({
                     Number::New(env, double(key)),
@@ -104,11 +123,12 @@ struct Window : public Napi::ObjectWrap<Window> {
         }
     }
 
-    void destroyWindow(const Napi::CallbackInfo&)
+    void destroyWindow(const Napi::CallbackInfo& info)
     {
         destroy();
 
-        keyCallbackJs.Release();
+        keyCallbackJs.Unref(info.Env());
+        keyCallbackJs = nullptr;
     }
 
     GLFWwindow* handle{nullptr};
