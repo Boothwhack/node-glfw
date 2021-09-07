@@ -36,6 +36,7 @@ struct Window : public Napi::ObjectWrap<Window> {
         exports.Set("Window", DefineClass(env, "Window", {
             InstanceAccessor<&Window::getShouldClose, &Window::setShouldClose>("shouldClose"),
             InstanceMethod<&Window::destroyWindow>("destroyWindow"),
+            InstanceMethod<&Window::getFramebufferSize>("getFramebufferSize"),
             InstanceMethod<&Window::makeContextCurrent>("makeContextCurrent"),
             InstanceMethod<&Window::setKeyCallback>("setKeyCallback"),
             InstanceMethod<&Window::swapBuffers>("swapBuffers"),
