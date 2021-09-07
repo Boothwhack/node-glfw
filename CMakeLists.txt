@@ -16,13 +16,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
-add_custom_command(OUTPUT src/constants.cpp
+add_custom_command(OUTPUT src/constants.cpp index.d.ts
         COMMAND
         node ${CMAKE_CURRENT_LIST_DIR}/generate-constants.js
         ${glfw_SOURCE_DIR}/include/GLFW/glfw3.h
+
         ${CMAKE_CURRENT_LIST_DIR}/src/constants.cpp.in
-        src/constants.cpp)
+        src/constants.cpp
+
+        ${CMAKE_CURRENT_LIST_DIR}/index.d.ts.in
+        index.d.ts)
 add_library(node_glfw SHARED ${CMAKE_JS_SRC}
+        index.d.ts
+
         src/addon.cpp
         src/constants.cpp
         src/constants.hpp
