@@ -30,3 +30,7 @@ jobs:
       - run: npm install
       - run: npm run setup
       - run: npm run build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: native-module
+          path: dist/

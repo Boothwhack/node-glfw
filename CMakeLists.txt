@@ -45,7 +45,7 @@ endif()
 set_target_properties(node_glfw PROPERTIES 
         PREFIX "" 
         SUFFIX ".node"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${platform}/${CMAKE_SYSTEM_PROCESSOR}")
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/dist/$<CONFIG>/${platform}/${CMAKE_SYSTEM_PROCESSOR}")
 
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
