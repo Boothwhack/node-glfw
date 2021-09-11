@@ -49,6 +49,7 @@ jobs:
 
   build:
     needs: [build-release-linux, build-debug-linux]
+    steps:
 
   publish:
     needs: build
