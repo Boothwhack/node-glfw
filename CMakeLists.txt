@@ -35,7 +35,17 @@ add_library(node_glfw SHARED ${CMAKE_JS_SRC}
         src/window.cpp
         src/window.hpp
         src/utils.hpp)
-set_target_properties(node_glfw PROPERTIES PREFIX "" SUFFIX ".node")
+
+if (WIN32)
+    set(platform "win32")
+elseif(UNIX)
+    set(platform "linux")
+endif()
+# TODO: Support Mac
+set_target_properties(node_glfw PROPERTIES 
+        PREFIX "" 
+        SUFFIX ".node"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${platform}/${CMAKE_SYSTEM_PROCESSOR}")
 
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
