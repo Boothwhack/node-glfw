@@ -16,7 +16,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
-add_custom_command(OUTPUT src/constants.cpp index.d.ts
+set(dist_dir ${CMAKE_CURRENT_LIST_DIR}/dist)
+
+add_custom_command(OUTPUT src/constants.cpp ${dist_dir}/index.d.ts
         COMMAND
         node ${CMAKE_CURRENT_LIST_DIR}/generate-constants.js
         ${glfw_SOURCE_DIR}/include/GLFW/glfw3.h
@@ -25,9 +27,9 @@ add_custom_command(OUTPUT src/constants.cpp index.d.ts
         src/constants.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/index.d.ts.in
-        index.d.ts)
+        ${dist_dir}/index.d.ts)
 add_library(node_glfw SHARED ${CMAKE_JS_SRC}
-        index.d.ts
+        ${dist_dir}/index.d.ts
 
         src/addon.cpp
         src/constants.cpp
@@ -35,7 +37,31 @@ add_library(node_glfw SHARED ${CMAKE_JS_SRC}
         src/window.cpp
         src/window.hpp
         src/utils.hpp)
-set_target_properties(node_glfw PROPERTIES PREFIX "" SUFFIX ".node")
+
+# Node JS compatible platform and arch
+if (WIN32)
+    set(platform "win32")
+elseif(UNIX)
+    set(platform "linux")
+else()
+    message(FATAL_ERROR "Unable to determine platform.")
+endif()
+
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+    set(arch "x64")
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i368|x86")
+    set(arch "x32")
+else()
+    message(FATAL_ERROR "Unable to determine architecture.")
+endif()
+
+set(out_dir "${dist_dir}/$<CONFIG>/${platform}/${arch}")
+
+set_target_properties(node_glfw PROPERTIES 
+        PREFIX "" 
+        SUFFIX ".node"
+        LIBRARY_OUTPUT_DIRECTORY ${out_dir}
+        RUNTIME_OUTPUT_DIRECTORY ${out_dir})
 
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

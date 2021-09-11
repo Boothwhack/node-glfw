@@ -1,0 +1,6 @@
+.github/
+build/
+src/
+CMakeLists.txt
+generate-constants.js
+index.d.ts.in
