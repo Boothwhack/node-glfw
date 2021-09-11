@@ -16,6 +16,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
+set(dist_dir ${CMAKE_CURRENT_LIST_DIR}/dist)
+
 add_custom_command(OUTPUT src/constants.cpp index.d.ts
         COMMAND
         node ${CMAKE_CURRENT_LIST_DIR}/generate-constants.js
@@ -25,9 +27,9 @@ add_custom_command(OUTPUT src/constants.cpp index.d.ts
         src/constants.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/index.d.ts.in
-        ${CMAKE_CURRENT_LIST_DIR}/index.d.ts)
+        ${dist_dir}/index.d.ts)
 add_library(node_glfw SHARED ${CMAKE_JS_SRC}
-        index.d.ts
+        ${dist_dir}/index.d.ts
 
         src/addon.cpp
         src/constants.cpp
@@ -45,7 +47,7 @@ endif()
 set_target_properties(node_glfw PROPERTIES 
         PREFIX "" 
         SUFFIX ".node"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/dist/$<CONFIG>/${platform}/${CMAKE_SYSTEM_PROCESSOR}")
+        LIBRARY_OUTPUT_DIRECTORY "${dist_dir}/$<CONFIG>/${platform}/${CMAKE_SYSTEM_PROCESSOR}")
 
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
