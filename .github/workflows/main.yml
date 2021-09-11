@@ -37,7 +37,6 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    container: mmozeiko/mingw-w64
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -45,8 +44,8 @@ jobs:
           node-version: "16"
       - uses: actions/download-artifact@v2
         with:
-          name: my-artifact
-          path: path/to/artifact
+          name: native-module
+          path: dist/
       
       - run: npm install
       - run: npm pack
