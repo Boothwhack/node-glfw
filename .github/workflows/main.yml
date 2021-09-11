@@ -34,3 +34,23 @@ jobs:
         with:
           name: native-module
           path: dist/
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    container: mmozeiko/mingw-w64
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+          path: path/to/artifact
+      
+      - run: npm install
+      - run: npm pack
+      - uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: ./*.tgz
