@@ -59,7 +59,7 @@ jobs:
         with:
           node-version: "16"
       - run: npm install
-      - run: npm run setup && npm run ${{ build-script }}
+      - run: npm run setup && npm run ${{ matrix.build-script }}
       - uses: actions/upload-artifact@v2
         with:
           name: dist
