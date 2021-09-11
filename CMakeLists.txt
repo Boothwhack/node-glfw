@@ -43,12 +43,16 @@ if (WIN32)
     set(platform "win32")
 elseif(UNIX)
     set(platform "linux")
+else()
+    message(FATAL_ERROR "Unable to determine platform.")
 endif()
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
     set(arch "x64")
 elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i368|x86")
     set(arch "x32")
+else()
+    message(FATAL_ERROR "Unable to determine architecture.")
 endif()
 
 set_target_properties(node_glfw PROPERTIES 
