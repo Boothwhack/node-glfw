@@ -15,12 +15,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  build-release-linux:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -28,15 +25,35 @@ jobs:
           node-version: "16"
       - run: sudo apt install xorg-dev
       - run: npm install
-      - run: npm run setup
-      - run: npm run build
+      - run: npm run setup && npm run build
       - uses: actions/upload-artifact@v2
         with:
-          name: native-module
+          name: dist
           path: dist/
+
+  build-debug-linux:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - run: sudo apt install xorg-dev
+      - run: npm install
+      - run: npm run setup -- -D && npm run build -- -D
+      - uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist/
+
+  build:
+    needs: [build-release-linux, build-debug-linux]
+
   publish:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -44,7 +61,7 @@ jobs:
           node-version: "16"
       - uses: actions/download-artifact@v2
         with:
-          name: native-module
+          name: dist
           path: dist/
       
       - run: npm install
