@@ -66,7 +66,7 @@ jobs:
           path: dist/
 
   publish:
-    needs: [build-release-linux, build-debug-linux, build-release-windows]
+    needs: [build-release-linux, build-debug-linux, build-windows]
     runs-on: ubuntu-latest
 
     steps:
