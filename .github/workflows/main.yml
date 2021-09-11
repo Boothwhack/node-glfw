@@ -13,12 +13,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: ["ubuntu-latest", "windows-latest"]
         build-script: ["build", "build:debug"]
 
     steps:
@@ -26,25 +26,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
-      - run: sudo apt install xorg-dev
-      - run: npm install
-      - run: npm run setup && npm run ${{ matrix.build-script }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist/
-  
-  build-windows:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        build-script: ["build", "build:debug"]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "16"
+      - if: ${{ matrix.os == "ubuntu-latest" }}
+        run: sudo apt install xorg-dev
       - run: npm install
       - run: npm run setup && npm run ${{ matrix.build-script }}
       - uses: actions/upload-artifact@v2
@@ -53,7 +36,7 @@ jobs:
           path: dist/
 
   publish:
-    needs: [build-linux, build-windows]
+    needs: [build]
     runs-on: ubuntu-latest
 
     steps:
