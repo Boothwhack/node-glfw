@@ -1,4 +1,5 @@
 const FS = require("fs/promises");
+const {dirname} = require("path");
 
 if (process.argv.length < 5) throw new Error("Expected 5 arguments.");
 
@@ -21,6 +22,7 @@ const DefineConstant = /^#define\s+GLFW_(\w+)/gm;
     const cppSrc = (await FS.readFile(cppSrcFile)).toString();
     const generatedCppSrc = cppSrc.replace("{{CONSTANTS}}", constantDescriptors);
 
+    await FS.mkdir(dirname(generatedCppFile), {recursive: true});
     await FS.writeFile(generatedCppFile, generatedCppSrc);
 
     // Generate TypeScript constant definitions
@@ -31,5 +33,6 @@ const DefineConstant = /^#define\s+GLFW_(\w+)/gm;
     const tsSrc = (await FS.readFile(tsSrcFile)).toString();
     const generatedTsSrc = tsSrc.replace("{{CONSTANTS}}", constantDefinitions);
 
+    await FS.mkdir(dirname(generatedCppFile), {recursive: true});
     await FS.writeFile(generatedTsFile, generatedTsSrc);
 })().catch(console.error);
