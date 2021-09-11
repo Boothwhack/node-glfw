@@ -7,6 +7,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main, actions ]
+    tags: [v*]
   pull_request:
     branches: [ main ]
 
@@ -36,6 +37,7 @@ jobs:
           path: dist/
 
   publish:
+    if: ${{ startsWith(github.event.ref, 'refs/tags/v') }}
     needs: [build]
     runs-on: ubuntu-latest
 
