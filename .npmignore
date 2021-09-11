@@ -3,4 +3,4 @@ build/
 src/
 CMakeLists.txt
 generate-constants.js
-index.d.ts.index
+index.d.ts.in
