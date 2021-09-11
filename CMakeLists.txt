@@ -47,7 +47,7 @@ endif()
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
     set(arch "x64")
-else if (CMAKE_SYSTEM_PROCESSOR MATCHES "i368|x86")
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i368|x86")
     set(arch "x32")
 endif()
 
