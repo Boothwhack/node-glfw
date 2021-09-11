@@ -55,10 +55,13 @@ else()
     message(FATAL_ERROR "Unable to determine architecture.")
 endif()
 
+set(out_dir "${dist_dir}/$<CONFIG>/${platform}/${arch}")
+
 set_target_properties(node_glfw PROPERTIES 
         PREFIX "" 
         SUFFIX ".node"
-        LIBRARY_OUTPUT_DIRECTORY "${dist_dir}/$<CONFIG>/${platform}/${arch}")
+        LIBRARY_OUTPUT_DIRECTORY ${out_dir}
+        RUNTIME_OUTPUT_DIRECTORY ${out_dir})
 
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
