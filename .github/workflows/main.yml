@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
-      - if: ${{ matrix.os == "ubuntu-latest" }}
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt install xorg-dev
       - run: npm install
       - run: npm run setup && npm run ${{ matrix.build-script }}
