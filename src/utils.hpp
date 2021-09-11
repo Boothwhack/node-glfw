@@ -6,12 +6,6 @@
 #include <tuple>
 #include <utility>
 
-template<typename... Args>
-void verifyArguments(const Napi::CallbackInfo& info, Args... args)
-{
-    detail::verifyArguments(info, std::forward_as_tuple(args...), std::make_index_sequence<sizeof...(Args)>());
-}
-
 namespace detail {
     template<typename... Args, size_t... Indices>
     void verifyArguments(const Napi::CallbackInfo& info, std::tuple<Args...> args, std::index_sequence<Indices...>)
@@ -116,4 +110,10 @@ namespace detail {
             );
         }
     }
+}
+
+template<typename... Args>
+void verifyArguments(const Napi::CallbackInfo& info, Args... args)
+{
+    detail::verifyArguments(info, std::forward_as_tuple(args...), std::make_index_sequence<sizeof...(Args)>());
 }
