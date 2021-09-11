@@ -18,7 +18,7 @@ FetchContent_MakeAvailable(glfw)
 
 set(dist_dir ${CMAKE_CURRENT_LIST_DIR}/dist)
 
-add_custom_command(OUTPUT src/constants.cpp index.d.ts
+add_custom_command(OUTPUT src/constants.cpp ${dist_dir}/index.d.ts
         COMMAND
         node ${CMAKE_CURRENT_LIST_DIR}/generate-constants.js
         ${glfw_SOURCE_DIR}/include/GLFW/glfw3.h
