@@ -7,13 +7,6 @@
 #include <utility>
 
 namespace detail {
-    template<typename... Args, size_t... Indices>
-    void verifyArguments(const Napi::CallbackInfo& info, std::tuple<Args...> args, std::index_sequence<Indices...>)
-    {
-        static_assert(sizeof...(Args) == sizeof...(Indices), "Incorrect number of argument types.");
-        (verifyArgument<Indices>(info, std::get<Indices, Args...>(args)), ...);
-    }
-
     template<unsigned... Digits>
     struct toChars {
         static constexpr char value[]{('0' + Digits)..., 0};
@@ -109,6 +102,13 @@ namespace detail {
                     "."
             );
         }
+    }
+    
+    template<typename... Args, size_t... Indices>
+    void verifyArguments(const Napi::CallbackInfo& info, std::tuple<Args...> args, std::index_sequence<Indices...>)
+    {
+        static_assert(sizeof...(Args) == sizeof...(Indices), "Incorrect number of argument types.");
+        (verifyArgument<Indices>(info, std::get<Indices, Args...>(args)), ...);
     }
 }
 
