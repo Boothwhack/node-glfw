@@ -1,6 +1,6 @@
 {
   "name": "@beeswax/node-glfw",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "scripts": {
     "setup": "cmake-js install",
     "build": "cmake-js build",
@@ -8,7 +8,7 @@
     "clean-build": "cmake-js clean && npm run build"
   },
   "types": "dist/index.d.ts",
-  "dependencies": {
+  "devDependencies": {
     "bindings": "^1.5.0",
     "bluebird": "^3.7.2",
     "cmake-js": "^6.2.1",
