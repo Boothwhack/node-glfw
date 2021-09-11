@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node_version: "16"
+          node-version: "16"
       - run: npm install
       - run: npm run setup && npm run build
       - uses: actions/upload-artifact@v2
@@ -63,7 +63,7 @@ jobs:
           path: dist/
 
   publish:
-    needs: [build-release-linux, build-debug-linux]
+    needs: [build-release-linux, build-debug-linux, build-release-windows]
     runs-on: ubuntu-latest
 
     steps:
