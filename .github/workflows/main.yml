@@ -46,6 +46,21 @@ jobs:
         with:
           name: dist
           path: dist/
+  
+  build-release-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node_version: "16"
+      - run: npm install
+      - run: npm run setup && npm run build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist/
 
   publish:
     needs: [build-release-linux, build-debug-linux]
