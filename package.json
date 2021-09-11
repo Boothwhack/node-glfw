@@ -4,6 +4,7 @@
   "scripts": {
     "setup": "cmake-js install",
     "build": "cmake-js build",
+    "build:debug": "cmake-js build -D",
     "clean-build": "cmake-js clean && npm run build"
   },
   "types": "dist/index.d.ts",

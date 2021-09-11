@@ -41,18 +41,14 @@ jobs:
           node-version: "16"
       - run: sudo apt install xorg-dev
       - run: npm install
-      - run: npm run setup -- -D && npm run build -- -D
+      - run: npm run setup && npm run build:debug
       - uses: actions/upload-artifact@v2
         with:
           name: dist
           path: dist/
 
-  build:
-    needs: [build-release-linux, build-debug-linux]
-    steps:
-
   publish:
-    needs: build
+    needs: [build-release-linux, build-debug-linux]
     runs-on: ubuntu-latest
 
     steps:
