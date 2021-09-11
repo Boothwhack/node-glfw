@@ -15,8 +15,11 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-release-linux:
+  build-linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build-script: ["build", "build:debug"]
 
     steps:
       - uses: actions/checkout@v2
@@ -25,23 +28,7 @@ jobs:
           node-version: "16"
       - run: sudo apt install xorg-dev
       - run: npm install
-      - run: npm run setup && npm run build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist/
-
-  build-debug-linux:
-    runs-on: ubuntu-latest
-
-    steps: 
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-      - run: sudo apt install xorg-dev
-      - run: npm install
-      - run: npm run setup && npm run build:debug
+      - run: npm run setup && npm run ${{ matrix.build-script }}
       - uses: actions/upload-artifact@v2
         with:
           name: dist
@@ -66,7 +53,7 @@ jobs:
           path: dist/
 
   publish:
-    needs: [build-release-linux, build-debug-linux, build-windows]
+    needs: [build-linux, build-windows]
     runs-on: ubuntu-latest
 
     steps:
