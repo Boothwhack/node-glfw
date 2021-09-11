@@ -26,6 +26,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
+      - run: sudo apt install xorg-dev
       - run: npm install
       - run: npm run setup
       - run: npm run build
