@@ -45,11 +45,12 @@ target_include_directories(node_glfw PRIVATE src)
 target_link_libraries(node_glfw PUBLIC glfw NodeApi NodeAddonApi)
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/dist")
-install(
-        TARGETS node_glfw
-        LIBRARY
-        DESTINATION "$<CONFIG>/${NODE_PLATFORM}/${NODE_ARCH}"
-        RUNTIME
-        DESTINATION "$<CONFIG>/${NODE_PLATFORM}/${NODE_ARCH}"
-)
+install(TARGETS node_glfw
+        CONFIGURATIONS Debug
+        LIBRARY RUNTIME
+        DESTINATION "Debug/${NODE_PLATFORM}/${NODE_ARCH}")
+install(TARGETS node_glfw
+        CONFIGURATIONS Release
+        LIBRARY RUNTIME
+        DESTINATION "Release/${NODE_PLATFORM}/${NODE_ARCH}")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/index.d.ts" DESTINATION .)
