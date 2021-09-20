@@ -1,5 +1,7 @@
 .github/
+.idea
 build/
+cmake-build-*
 src/
 CMakeLists.txt
 generate-constants.js

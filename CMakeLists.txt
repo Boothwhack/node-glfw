@@ -16,9 +16,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
-set(dist_dir ${CMAKE_CURRENT_LIST_DIR}/dist)
-
-add_custom_command(OUTPUT src/constants.cpp ${dist_dir}/index.d.ts
+# Generate sources
+add_custom_command(OUTPUT src/constants.cpp index.d.ts
         COMMAND
         node ${CMAKE_CURRENT_LIST_DIR}/generate-constants.js
         ${glfw_SOURCE_DIR}/include/GLFW/glfw3.h
@@ -27,9 +26,10 @@ add_custom_command(OUTPUT src/constants.cpp ${dist_dir}/index.d.ts
         src/constants.cpp
 
         ${CMAKE_CURRENT_LIST_DIR}/index.d.ts.in
-        ${dist_dir}/index.d.ts)
-add_library(node_glfw SHARED ${CMAKE_JS_SRC}
-        ${dist_dir}/index.d.ts
+        index.d.ts)
+
+add_library(node_glfw SHARED
+        index.d.ts
 
         src/addon.cpp
         src/constants.cpp
@@ -38,38 +38,18 @@ add_library(node_glfw SHARED ${CMAKE_JS_SRC}
         src/window.hpp
         src/utils.hpp)
 
-# Node JS compatible platform and arch
-if (WIN32)
-    set(platform "win32")
-elseif(UNIX)
-    set(platform "linux")
-else()
-    message(FATAL_ERROR "Unable to determine platform.")
-endif()
+find_package(NodeApi 16 REQUIRED)
+find_package(NodeAddonApi REQUIRED)
 
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
-    set(arch "x64")
-elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i368|x86")
-    set(arch "x32")
-else()
-    message(FATAL_ERROR "Unable to determine architecture.")
-endif()
+target_include_directories(node_glfw PRIVATE src)
+target_link_libraries(node_glfw PUBLIC glfw NodeApi NodeAddonApi)
 
-set(out_dir "${dist_dir}/$<CONFIG>/${platform}/${arch}")
-
-set_target_properties(node_glfw PROPERTIES 
-        PREFIX "" 
-        SUFFIX ".node"
-        LIBRARY_OUTPUT_DIRECTORY ${out_dir}
-        RUNTIME_OUTPUT_DIRECTORY ${out_dir})
-
-execute_process(COMMAND node -p "require('node-addon-api').include"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE NODE_ADDON_API_INCLUDE_DIR)
-string(REPLACE "\n" "" NODE_ADDON_API_INCLUDE_DIR ${NODE_ADDON_API_INCLUDE_DIR})
-string(REPLACE "\"" "" NODE_ADDON_API_INCLUDE_DIR ${NODE_ADDON_API_INCLUDE_DIR})
-
-target_include_directories(node_glfw PRIVATE ${CMAKE_JS_INC} ${NODE_ADDON_API_INCLUDE_DIR} src)
-target_link_libraries(node_glfw PUBLIC ${CMAKE_JS_LIB})
-
-target_link_libraries(node_glfw PUBLIC glfw)
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/dist")
+install(
+        TARGETS node_glfw
+        LIBRARY
+        DESTINATION "$<CONFIG>/${NODE_PLATFORM}/${NODE_ARCH}"
+        RUNTIME
+        DESTINATION "$<CONFIG>/${NODE_PLATFORM}/${NODE_ARCH}"
+)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/index.d.ts" DESTINATION .)

@@ -1,17 +1,16 @@
 {
   "name": "@beeswax/node-glfw",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "scripts": {
-    "setup": "cmake-js install",
-    "build": "cmake-js build",
-    "build:debug": "cmake-js build -D",
-    "clean-build": "cmake-js clean && npm run build"
+    "build:release": "toolchain --config Release build",
+    "build:debug": "cmake-js --config Debug build",
+    "dist:release": "toolchain --config Release install",
+    "dist:debug": "toolchain --config Debug install"
   },
   "types": "dist/index.d.ts",
   "devDependencies": {
-    "bindings": "^1.5.0",
-    "bluebird": "^3.7.2",
-    "cmake-js": "^6.2.1",
-    "node-addon-api": "^4.1.0"
+    "@beeswax/toolchain": "^1.0.0",
+    "@beeswax/node-api": "^1.0.1",
+    "node-addon-api": "^4.2.0"
   }
 }

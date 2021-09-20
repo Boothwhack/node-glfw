@@ -1,7 +1,5 @@
 build
-cmake-*
+cmake-build-*
+dist
 node-modules
 .idea
-
-# Project exclude paths
-/node_modules/
