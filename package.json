@@ -1,6 +1,6 @@
 {
   "name": "@beeswax/node-glfw",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "scripts": {
     "build:release": "toolchain --config Release build",
     "build:debug": "toolchain --config Debug build",
