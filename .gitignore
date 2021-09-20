@@ -1,5 +1,5 @@
 build
 cmake-build-*
 dist
-node-modules
+node_modules
 .idea

@@ -56,5 +56,5 @@ install(TARGETS node_glfw
         LIBRARY
         DESTINATION "Release/${NODE_PLATFORM}/${NODE_ARCH}"
         RUNTIME
-        DESTINATION " Release/${NODE_PLATFORM}/${NODE_ARCH}")
+        DESTINATION "Release/${NODE_PLATFORM}/${NODE_ARCH}")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/index.d.ts" DESTINATION .)
