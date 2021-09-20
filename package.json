@@ -3,7 +3,7 @@
   "version": "0.4.3",
   "scripts": {
     "build:release": "toolchain --config Release build",
-    "build:debug": "cmake-js --config Debug build",
+    "build:debug": "toolchain --config Debug build",
     "dist:release": "toolchain --config Release install",
     "dist:debug": "toolchain --config Debug install"
   },
