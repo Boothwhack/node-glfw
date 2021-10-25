@@ -20,4 +20,4 @@ export function windowHint(hint: number, value: number): void;
 
 export const getProcAddress: any;
 
-{{CONSTANTS}}
+/*CONSTANTS*/

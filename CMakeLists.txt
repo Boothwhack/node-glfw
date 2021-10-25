@@ -25,7 +25,7 @@ add_custom_command(OUTPUT src/constants.cpp index.d.ts
         ${CMAKE_CURRENT_LIST_DIR}/src/constants.cpp.in
         src/constants.cpp
 
-        ${CMAKE_CURRENT_LIST_DIR}/index.d.ts.in
+        ${CMAKE_CURRENT_LIST_DIR}/index.in.d.ts
         index.d.ts)
 
 add_library(node_glfw SHARED

@@ -31,7 +31,7 @@ const DefineConstant = /^#define\s+GLFW_(\w+)/gm;
         .join('\n');
 
     const tsSrc = (await FS.readFile(tsSrcFile)).toString();
-    const generatedTsSrc = tsSrc.replace("{{CONSTANTS}}", constantDefinitions);
+    const generatedTsSrc = tsSrc.replace("/*CONSTANTS*/", constantDefinitions);
 
     await FS.mkdir(dirname(generatedCppFile), {recursive: true});
     await FS.writeFile(generatedTsFile, generatedTsSrc);
