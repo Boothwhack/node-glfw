@@ -10,7 +10,10 @@ public:
     typedef void (*glFunc) (void);
     typedef glFunc (glLoadFunc)(const char*);
 
+    glLoadFunc* loadPtr_;
+
     GLFWAddon(Napi::Env env, Napi::Object exports)
+        : loadPtr_{&glfwGetProcAddress}
     {
         glfwInit();
 
@@ -40,8 +43,9 @@ public:
         glfwWindowHint(info[0].ToNumber(), info[1].ToNumber());
     }
 
-    Napi::Value getProcAddress(const Napi::CallbackInfo& info) {
-        return Napi::External<glLoadFunc>::New(info.Env(), glfwGetProcAddress);
+    Napi::Value getProcAddress(const Napi::CallbackInfo& info)
+    {
+        return Napi::External<glLoadFunc*>::New(info.Env(), &loadPtr_);
     }
 };
 
