@@ -7,6 +7,9 @@
 
 class GLFWAddon : public Napi::Addon<GLFWAddon> {
 public:
+    typedef void (*glFunc) (void);
+    typedef glFunc (glLoadFunc)(const char*);
+
     GLFWAddon(Napi::Env env, Napi::Object exports)
     {
         glfwInit();
@@ -17,6 +20,7 @@ public:
         DefineAddon(exports, {
             InstanceMethod<&GLFWAddon::pollEvents>("pollEvents"),
             InstanceMethod<&GLFWAddon::windowHint>("windowHint"),
+            InstanceAccessor<&GLFWAddon::getProcAddress>("getProcAddress"),
         });
     }
 
@@ -34,6 +38,10 @@ public:
     {
         verifyArguments(info, napi_number, napi_number);
         glfwWindowHint(info[0].ToNumber(), info[1].ToNumber());
+    }
+
+    Napi::Value getProcAddress(const Napi::CallbackInfo& info) {
+        return Napi::External<glLoadFunc>::New(info.Env(), glfwGetProcAddress);
     }
 };
 
