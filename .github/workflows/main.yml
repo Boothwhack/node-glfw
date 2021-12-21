@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: "16"
       - if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: sudo apt install xorg-dev
+        run: sudo apt update && sudo apt install xorg-dev
       - run: npm install
       - run: npm run build:${{ matrix.config }} && npm run dist:${{ matrix.config }}
       - uses: actions/upload-artifact@v2
