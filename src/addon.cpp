@@ -9,20 +9,26 @@
 // GLFWAddon may be instantiated in multiple threads, but glfwInit should only be called once and glfwTerminate should
 // be called when all instances of GLFWAddon are destroyed.
 struct GLFWGlobalState {
-    GLFWGlobalState() {
+    Napi::ThreadSafeFunction errorCallbackJs{nullptr};
+
+    GLFWGlobalState()
+    {
         glfwInit();
     }
 
-    ~GLFWGlobalState() {
+    ~GLFWGlobalState()
+    {
         glfwTerminate();
     }
 
-    static std::weak_ptr<GLFWGlobalState>& weakRefGlobalInstance() {
+    static std::weak_ptr<GLFWGlobalState>& weakRefGlobalInstance()
+    {
         static std::weak_ptr<GLFWGlobalState> globalInstanceRef{};
         return globalInstanceRef;
     }
 
-    static std::shared_ptr<GLFWGlobalState> refGlobalInstance() {
+    static std::shared_ptr<GLFWGlobalState> refGlobalInstance()
+    {
         static std::mutex mtx{};
 
         // ensure multiple threads are not trying to create a new instance at the same time.
@@ -34,7 +40,8 @@ struct GLFWGlobalState {
             auto newInstance{std::make_shared<GLFWGlobalState>()};
             weakRef = newInstance;
             return newInstance;
-        } else {
+        }
+        else {
             // at least one thread already has a reference to the instance, return another reference.
             return weakRef.lock();
         }
@@ -43,14 +50,15 @@ struct GLFWGlobalState {
 
 class GLFWAddon : public Napi::Addon<GLFWAddon> {
 public:
-    typedef void (*glFunc) (void);
+    typedef void (* glFunc)(void);
     typedef glFunc (glLoadFunc)(const char*);
 
     glLoadFunc* loadPtr_;
     std::shared_ptr<GLFWGlobalState> glfw_;
 
     GLFWAddon(Napi::Env env, Napi::Object exports)
-            : loadPtr_{&glfwGetProcAddress}, glfw_{GLFWGlobalState::refGlobalInstance()} {
+        : loadPtr_{&glfwGetProcAddress}, glfw_{GLFWGlobalState::refGlobalInstance()}
+    {
         InitConstants(env, exports);
         InitWindow(env, exports);
 
@@ -61,7 +69,8 @@ public:
         });
     }
 
-    void pollEvents(const Napi::CallbackInfo& info) {
+    void pollEvents(const Napi::CallbackInfo& info)
+    {
         glfwPollEvents();
     }
 
@@ -74,6 +83,14 @@ public:
     Napi::Value getProcAddress(const Napi::CallbackInfo& info)
     {
         return Napi::External<glLoadFunc*>::New(info.Env(), &loadPtr_);
+    }
+
+    void setErrorCallback(const Napi::CallbackInfo& info)
+    {
+        if (info[0].IsNull() || info[0].IsUndefined()) {
+            glfwSetErrorCallback(nullptr);
+
+        }
     }
 };
 

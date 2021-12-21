@@ -6,7 +6,28 @@
 using Napi::CallbackInfo;
 using Napi::Number;
 
+struct KeyEvent {
+    int key;
+    int scancode;
+    int action;
+    int modifiers;
+};
+
 struct Window : public Napi::ObjectWrap<Window> {
+    /*static void asyncJsKeyCallback(Napi::Env env, Napi::Function jsCallback, std::nullptr_t*, KeyEvent* ev)
+    {
+        jsCallback.Call({
+            Number::New(env, double(ev->key)),
+            Number::New(env, double(ev->scancode)),
+            Number::New(env, double(ev->action)),
+            Number::New(env, double(ev->modifiers)),
+        });
+        delete ev;
+    }*/
+
+//    Napi::TypedThreadSafeFunction<std::nullptr_t, KeyEvent, &asyncJsKeyCallback> keyCallbackJs{nullptr};
+    Napi::FunctionReference keyCallbackJs{};
+
     explicit Window(const Napi::CallbackInfo& info)
         : Napi::ObjectWrap<Window>(info)
     {
@@ -77,17 +98,17 @@ struct Window : public Napi::ObjectWrap<Window> {
         glfwSwapBuffers(handle);
     }
 
-    Napi::ThreadSafeFunction keyCallbackJs{nullptr};
-
     void setKeyCallback(const Napi::CallbackInfo& info)
     {
         if (info[0].IsNull() || info[0].IsUndefined()) {
             glfwSetKeyCallback(handle, nullptr);
-            keyCallbackJs.Unref(info.Env());
-            keyCallbackJs = nullptr;
+            keyCallbackJs.Reset();
         }
         else {
-            keyCallbackJs = Napi::ThreadSafeFunction::New(
+            if (keyCallbackJs != nullptr) {
+                keyCallbackJs.Release();
+            }
+            keyCallbackJs = Napi::TypedThreadSafeFunction<nullptr_t, KeyEvent, &Window::asyncJsKeyCallback>::New(
                 info.Env(),
                 info[0].As<Napi::Function>(),
                 "Window key callback",
@@ -96,23 +117,19 @@ struct Window : public Napi::ObjectWrap<Window> {
             );
 
             // Set key callback every time in case it has previously been removed.
-            glfwSetKeyCallback(handle, &Window::keyCallback);
+            glfwSetKeyCallback(handle, &Window::glfwKeyCallback);
         }
     }
 
-    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    static void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int modifiers)
     {
         Window& w{*static_cast<Window*>(glfwGetWindowUserPointer(window))};
 
         if (w.keyCallbackJs != nullptr) {
-            w.keyCallbackJs.NonBlockingCall([key, scancode, action, mods](Napi::Env env, Napi::Function cb) {
-                cb.Call({
-                    Number::New(env, double(key)),
-                    Number::New(env, double(scancode)),
-                    Number::New(env, double(action)),
-                    Number::New(env, double(mods)),
-                });
-            });
+            w.keyCallbackJs.Acquire();
+            auto* ev = new KeyEvent{key, scancode, action, modifiers};
+            w.keyCallbackJs.BlockingCall(ev);
+            w.keyCallbackJs.Release();
         }
     }
 
